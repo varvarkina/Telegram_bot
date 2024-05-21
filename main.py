@@ -1,13 +1,9 @@
 import asyncio
 import logging
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
-# from app.config_reader import load_config
-
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
-
-
 
 keyboard_remove = types.ReplyKeyboardRemove()
 
@@ -33,30 +29,24 @@ class TestQuestions(StatesGroup):
     decision6 = State()
     decision7 = State()
 
-# @dp.message_handler(commands="start")
 async def cmd_start(message: types.Message, state: FSMContext):
     await state.finish()
     await message.answer("Здравствуйте!")
     await message.answer("Чтобы приступить к тесту используйте команду /test", reply_markup=keyboard_remove)
 
-# @dp.message_handler(commands="stop")
 async def cmd_stop(message: types.Message, state: FSMContext):
     await state.finish()
     await message.answer("Тест принудительно завершён", reply_markup=keyboard_remove)
 
-# @dp.message_handler(commands="help")
 async def cmd_help(message: types.Message):
     await message.answer("Тех. поддержка:\n@li_lhiver",
                          reply_markup=keyboard_remove)
 
-# @dp.message_handler(commands="info")
 async def cmd_info(message: types.Message):
     await message.answer("Этот бот поможет Вам изучить Республику Марий Эл \nс готовыми маршрутами, "
                          "составленными специально для вас!\n", reply_markup=keyboard_remove)
 
 user_data = {}
-
-# @dp.message_handler(commands="test")
 
 async def test_start(message: types.Message):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
@@ -171,42 +161,21 @@ async def decision6(message: types.Message, state: FSMContext):
     global culture_res, nature_res, arch_res
     if max(culture_res,nature_res,arch_res) == arch_res:
         await message.answer("Вам подойдет маршрут по архитектурным достопримечательствам города")
-
-    # decision = message.text.lower()
-    # if decision not in available_decision_answer3:
-    #     await message.answer("Пожалуйста, используйте клавиатуру ниже")
-    #     return
-    # if message.text == "полезный досуг, хочу узнать что-то новое, посмотреть на вещи, созданные людьми в различные времена":
-    #     culture_res += 1
-    # elif message.text == "досуг для активного отдыха с семьей, компанией или уединение на природе":
-    #     nature_res += 1
-    # elif message.text == "досуг для прогулок по городу, создания фотографий на фоне различных сооружений архитектуры":
-    #     arch_res += 1
-    # keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
-    # buttons = ["восхищаюсь скульптурными композициями", "увлекаюсь искусством и живописью",
-    #            "мне нравится любоваться живописными пейзажами"]
-    # keyboard.add(*buttons)
     await TestQuestions.decision7.set()
     await message.answer("Я скорее:")#, reply_markup=keyboard
-
-# if __name__ == "__main__":
-#     executor.start_polling(dp, skip_updates=True)
 
 from aiogram.types import BotCommand
 
 logger = logging.getLogger(__name__)
-
 
 async def set_commands(bot: Bot):
     commands = [
         BotCommand(command="/test", description="Начать тест"),
         BotCommand(command="/stop", description="Завершить тест"),
         BotCommand(command="/info", description="Ссылки и полезная информация"),
-        BotCommand(command="/help", description="Помощь"),
-        # BotCommand(command="/back", description="На шаг назад")
+        BotCommand(command="/help", description="Помощь")
     ]
     await bot.set_my_commands(commands)
-
 
 def register_handlers_common(dp: Dispatcher):
     dp.register_message_handler(cmd_start, commands="start", state="*")
@@ -229,7 +198,6 @@ async def main():
         format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
     )
     logger.error("Starting bot")
-    # config = load_config("config/bot.ini")
 
     bot = Bot(token="5330757094:AAEBAv-n4DpkuXSeAmswRiTS50wg3Wahj7o")
     dp = Dispatcher(bot, storage=MemoryStorage())
@@ -239,7 +207,6 @@ async def main():
     await set_commands(bot)
 
     await dp.start_polling()
-
 
 if __name__ == '__main__':
     asyncio.run(main())
